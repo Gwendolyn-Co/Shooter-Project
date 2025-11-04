@@ -45,21 +45,24 @@ public class Player : MonoBehaviour
 
     void Movement()
     {
-        //Read the input from the player
         horizontalInput = Input.GetAxis("Horizontal");
         verticalInput = Input.GetAxis("Vertical");
-        //Move the player
+
+        // Move the player
         transform.Translate(new Vector3(horizontalInput, verticalInput, 0) * Time.deltaTime * playerSpeed);
-        //Player leaves the screen horizontally
-        if(transform.position.x > horizontalScreenLimit || transform.position.x <= -horizontalScreenLimit)
-        {
-            transform.position = new Vector3(transform.position.x * -1, transform.position.y, 0);
-        }
-        //Player leaves the screen vertically
-        if(transform.position.y > verticalScreenLimit || transform.position.y <= -verticalScreenLimit)
-        {
-            transform.position = new Vector3(transform.position.x, transform.position.y * -1, 0);
-        }
+
+        // Horizontal wrap-around (same as before)
+        if(transform.position.x > horizontalScreenLimit)
+            transform.position = new Vector3(-horizontalScreenLimit, transform.position.y, 0);
+        else if(transform.position.x < -horizontalScreenLimit)
+            transform.position = new Vector3(horizontalScreenLimit, transform.position.y, 0);
+
+        // Vertical restriction: stay in bottom half
+        float bottomLimit = -verticalScreenLimit;   // bottom of screen
+        float middleLimit = 0f;                     // middle of screen
+        transform.position = new Vector3(transform.position.x,
+                                         Mathf.Clamp(transform.position.y, bottomLimit, middleLimit),
+                                         0);
     }
 
 }
