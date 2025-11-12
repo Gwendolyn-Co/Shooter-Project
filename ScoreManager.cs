@@ -25,7 +25,7 @@ public class ScoreManager : MonoBehaviour
     }
 
 
-    // Start is called before the first frame update
+    // Start is called before the first frame update Hi 
     void Start()
     {
         score = 0;
