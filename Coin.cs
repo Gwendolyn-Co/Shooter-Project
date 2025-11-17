@@ -44,15 +44,17 @@ public class Coin : MonoBehaviour
             yield return null;
         }
 
-        Destroy(gameObject); // finally destroys coin
+        Destroy(gameObject); // finally destroy coin
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    private void OnTriggerEnter2D(Collider2D other)
     {
-        if (collision.CompareTag("Player"))
+    
+        if (other.gameObject.layer == 7)
         {
             ScoreManager.instance.AddScore(scoreValue);
             Destroy(gameObject);
         }
     }
 }
+
