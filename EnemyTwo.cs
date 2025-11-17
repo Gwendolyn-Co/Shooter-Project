@@ -24,10 +24,28 @@ public class EnemyTwo : MonoBehaviour
         float xOffset = Mathf.Sin(Time.time * horizontalFrequency) * horizontalAmplitude;
         transform.position = new Vector3(startX + xOffset, transform.position.y, transform.position.z);
 
-        // Destroy if off-screen
-        if (transform.position.y < -6.5f)
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.gameObject.layer == 7)
         {
-            Destroy(gameObject);
+            Player player = other.GetComponent<Player>();
+
+            if (player != null)
+            {
+                if (player.hasShield)
+                {
+                    // use up the shield instead of killing the player
+                    player.ConsumeShield();
+                }
+                else
+                {
+                    // no shield: normal death behavior
+                    Destroy(other.gameObject);
+                }
+            }
         }
     }
 }
+
