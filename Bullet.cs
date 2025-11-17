@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
+    [SerializeField] private LayerMask Bounds;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -14,9 +16,12 @@ public class Bullet : MonoBehaviour
     void Update()
     {
         transform.Translate(new Vector3(0, 1, 0) * Time.deltaTime * 8f);
-        if (transform.position.y > 6.5f)
-        {
-            Destroy(this.gameObject);
+        
+    }
+
+    private void OnTriggerEnter2D(Collider2D other) {
+        if (other.gameObject.layer != 6){
+            Destroy(other.gameObject);
         }
     }
 }
