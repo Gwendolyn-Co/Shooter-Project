@@ -15,15 +15,29 @@ public class Player : MonoBehaviour
     private float verticalInput;
 
     private float horizontalScreenLimit = 9.5f;
-    private float verticalScreenLimit = 6.5f;
+    private float verticalScreenLimit = 4.5f;
 
     public GameObject bulletPrefab;
+    public float bulletForce = 5f;
+
+    private bool isShieldActive = false;
+    private float shieldTimer = 0f;
+    public GameObject shieldVisual;
+    public bool hasShield = false;
+
+    public AudioSource audioSource;
+    public AudioClip shieldPickupClip;
+    public AudioClip shieldBreakClip;
+
 
     void Start()
     {
         playerSpeed = 6f;
         //This function is called at the start of the game
         
+        if (shieldVisual != null) {
+            shieldVisual.SetActive(false);
+        }
     }
 
     void Update()
@@ -32,6 +46,16 @@ public class Player : MonoBehaviour
         Movement();
         Shooting();
 
+        // Handle shield duration
+        if (isShieldActive)
+        {
+            shieldTimer -= Time.deltaTime;
+            if (shieldTimer <= 0)
+            {
+                ConsumeShield();
+            }
+    }
+
     }
 
     void Shooting()
@@ -39,9 +63,25 @@ public class Player : MonoBehaviour
         //if the player presses the SPACE key, create a projectile
         if(Input.GetKeyDown(KeyCode.Space))
         {
-            Instantiate(bulletPrefab, transform.position + new Vector3(0, 1, 0), Quaternion.identity);
+            Shoot();
         }
     }
+
+    void Shoot()
+    {
+        // spawn at player's position
+        Vector3 spawnPos = transform.position; 
+        // or: transform.position + transform.up * 0.5f;
+
+         GameObject bullet = Instantiate(bulletPrefab, spawnPos, Quaternion.identity);
+
+        // add force if it has a Rigidbody2D
+        // Rigidbody2D rb = bullet.GetComponent<Rigidbody2D>();
+        // if (rb != null)
+        // {
+        //     rb.AddForce(transform.up * bulletForce, ForceMode2D.Impulse);
+        // }
+}
 
     void Movement()
     {
@@ -65,4 +105,37 @@ public class Player : MonoBehaviour
                                          0);
     }
 
+    public void ActivateShield(float duration)
+    {
+        hasShield = true;
+
+        if (shieldVisual != null)
+        {
+            shieldVisual.SetActive(true);
+        }
+
+        if (audioSource != null && shieldPickupClip != null)
+        {
+            audioSource.PlayOneShot(shieldPickupClip);
+        }
+    }
+
+    public void ConsumeShield()
+    {
+        hasShield = false;
+
+        if (shieldVisual != null)
+        {
+            shieldVisual.SetActive(false);
+        }
+
+        if (audioSource != null && shieldBreakClip != null)
+        {
+            audioSource.PlayOneShot(shieldBreakClip);
+        }
+    }
+
+
+
 }
+
